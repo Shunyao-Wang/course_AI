@@ -7,6 +7,7 @@
 int move[4][2] = {{-1, 0}, {0, -1}, {0, 1}, {1, 0}}; //上 左 右 下  置换顺序
 char op[4] = {'U', 'L', 'R', 'D'};
 int map[size][size], map2[size * size], limit, path[100];
+int map_path[50][size * size];
 int flag, length;
 int goal[16][2] = {{3, 3}, {0, 0}, {0, 1}, {0, 2}, {0, 3}, {1, 0}, {1, 1}, {1, 2}, {1, 3}, {2, 0}, {2, 1}, {2, 2}, {2, 3}, {3, 0}, {3, 1}, {3, 2}}; //各个数字应在位置对照表
 int nixu(int a[size * size])
@@ -103,33 +104,73 @@ void dfs(int sx, int sy, int len, int pre_move)
         }
     }
 }
-int main()
+
+int print_map(int pmap[size * size])
 {
-    int i, j, k, l, m, n, sx, sy;
-    char c, g;
-    i = 0;
-    /*printf("请输入您要判断几组十五数码：\n");
-    scanf("%d", &n);
-    while (n--)
-    {*/
-    printf("请输入十五数码：\n");
-    flag = 0, length = 0;
-    memset(path, -1, sizeof(path)); //已定义path[100]数组，将path填满-1   void* memset(void*s,int ch,size_t n):将S中前n个字节用ch替换并返回S。
-    for (i = 0; i < 16; i++)        //给map 和map2赋值map是二维数组，map2是一维数组
+    int i, j;
+    j = 0;
+    for (i = 0; i < size * size; i++)
     {
-        scanf("%d", &map2[i]);
-        if (map2[i] == 0)
+        printf("%2d  ", pmap[i]);
+        j++;
+        if (j == 4)
         {
-            map[i / size][i % size] = 0; //map二维数组，保存具体值
-            sx = i / size;               //sx,sy保存0的坐标
-            sy = i % size;
+            printf("\n");
+            j = 0;
         }
-        else
+    }
+    printf("\n");
+}
+
+int main(int argc, char const *argv[])
+{
+    int i, j, k, l, m, n, sx, sy, nx, ny;
+    char c, g;
+    flag = 0, length = 0;
+    memset(path, -1, sizeof(path)); //已定义path[100]数组，将path填满-1
+    if (argc == 1)
+    {
+        printf("请输入十五数码：\n");
+        for (i = 0; i < size * size; i++) //给map 和map2赋值map是二维数组，map2是一维数组
         {
-            map[i / size][i % size] = map2[i];
+            scanf("%d", &map2[i]);
+            map_path[0][i] = map2[i]; //保存路径
+            if (map2[i] == 0)
+            {
+                map[i / size][i % size] = 0; //map二维数组，保存具体值
+                sx = i / size;               //sx,sy保存0的坐标
+                sy = i % size;
+            }
+            else
+            {
+                map[i / size][i % size] = map2[i];
+            }
         }
     }
 
+    else if (argc == 17)
+    {
+        for (i = 0; i < size * size; i++) //给map 和map2赋值map是二维数组，map2是一维数组
+        {
+            sscanf(argv[i + 1], "%d", &map2[i]); //argv[]转int
+            map_path[0][i] = map2[i];            //保存路径
+            if (map2[i] == 0)
+            {
+                map[i / size][i % size] = 0; //map二维数组，保存具体值
+                sx = i / size;               //sx,sy保存0的坐标
+                sy = i % size;
+            }
+            else
+            {
+                map[i / size][i % size] = map2[i];
+            }
+        }
+    }
+    else
+    {
+        printf("数字数量不对！");
+        exit(1);
+    }
     if (nixu(map2) == 1) //该状态可达
     {
         limit = hv(map);              //全部的曼哈顿距离之和
@@ -141,13 +182,31 @@ int main()
         }
         if (flag)
         {
+            for (i = 0; i < size * size; i++)
+                map[i / size][i % size] = map2[i]; //让map保存初始矩阵
+            printf("输入原始矩阵为：\n");
+            print_map(map_path[0]);
             for (i = 0; i < length; i++)
-                printf("%c", op[path[i]]); //根据path输出URLD路径
+            {
+                nx = sx + move[path[i]][0]; //移动的四步 上左右下
+                ny = sy + move[path[i]][1];
+                swap(&map[sx][sy], &map[nx][ny]);
+                for (j = 0; j < size * size; j++)
+                {
+                    map_path[i + 1][j] = map[j / size][j % size];
+                }
+                sx = nx;
+                sy = ny;
+                printf("第%d步 %c:\n", i + 1, op[path[i]]); //根据path输出URLD路径
+                print_map(map_path[i + 1]);
+            }
+            printf("完整路径: ");
+            for (i = 0; i < length; i++)
+                printf("%c", op[path[i]]);
             printf("\n");
         }
     }
     else if (!nixu(map2) || !flag)
         printf("This puzzle is not solvable.\n");
-
     return 0;
 }

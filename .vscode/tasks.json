@@ -8,7 +8,7 @@
             "type": "shell",
             "command": "g++",
             "args": [
-                "${workspaceFolder}/15num/15num.cpp",
+                "${workspaceFolder}/15num/15num.c",
                 "-o",
                 "${workspaceFolder}/15num/15num"
             ],
