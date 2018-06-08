@@ -62,7 +62,6 @@ int getch(void)
 {
 	struct termios tm, tm_old;
 	int fd = 0, ch;
-
 	if (tcgetattr(fd, &tm) < 0)
 	{ //保存现在的终端设置
 		return -1;
@@ -73,13 +72,11 @@ int getch(void)
 	{ //设置上更改之后的设置
 		return -1;
 	}
-
 	ch = getchar();
 	if (tcsetattr(fd, TCSANOW, &tm_old) < 0)
 	{ //更改设置为最初的样子
 		return -1;
 	}
-
 	return ch;
 }
 int ini_chessbored() //初始化棋盘
@@ -790,6 +787,7 @@ int main()
 		cursor_x = chessbored_size / 2;
 		cursor_y = chessbored_size / 2;
 		empty_node.clear();
+		system("clear");
 		printf("\n\n\n\n\n");
 		cout << "                ****************************************" << endl;
 		cout << "                *                                      *" << endl;

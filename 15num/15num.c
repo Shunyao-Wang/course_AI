@@ -92,7 +92,7 @@ void dfs(int sx, int sy, int len, int pre_move)
         if (0 <= nx && nx < size && 0 <= ny && ny < size) //判断移动合理
         {
             swap(&map[sx][sy], &map[nx][ny]);
-            int p = hv(map);               //移动后的 曼哈顿距离p=16
+            int p = hv(map);               //移动后的曼哈顿距离
             if (p + len <= limit && !flag) //p+len<=limit&&!flag剪枝判断语句
             {
                 path[len] = i;

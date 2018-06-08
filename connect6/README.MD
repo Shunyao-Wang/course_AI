@@ -1,3 +1,0 @@
-六子棋AI程序
-connect6.cpp为最终程序
-qiangAI和bak保存了一些有想法的评估函数
